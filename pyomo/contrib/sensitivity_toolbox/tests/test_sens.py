@@ -17,6 +17,7 @@ import pyutilib.th as unittest
 from pyomo.environ import * 
 from pyomo.opt import SolverFactory
 from pyomo.dae import ContinuousSet
+from pyomo.dae.simulator import scipy_available
 from pyomo.core.expr.current import identify_variables
 from pyomo.contrib.sensitivity_toolbox.sens import sipopt
 import pyomo.contrib.sensitivity_toolbox.examples.feedbackController as fc
@@ -77,6 +78,7 @@ class TestSensitivityToolbox(unittest.TestCase):
 
 
     #test feedbackController Solution when the model gets cloned
+    @unittest.skipIf(not scipy_available, "scipy is required for this test")
     @unittest.skipIf(not opt.available(False), "ipopt_sens is not available")
     def test_clonedModel_soln(self):
 
@@ -171,6 +173,7 @@ class TestSensitivityToolbox(unittest.TestCase):
         self.assertAlmostEqual(value(m_sipopt.J),0.0048956783,8)
          
 
+    @unittest.skipIf(not scipy_available, "scipy is required for this test")
     @unittest.skipIf(not opt.available(False), "ipopt_sens is not available")
     def test_noClone_soln(self):
 
@@ -255,6 +258,7 @@ class TestSensitivityToolbox(unittest.TestCase):
 
 
     #test indexed param mapping to var and perturbed values
+    @unittest.skipIf(not scipy_available, "scipy is required for this test")
     @unittest.skipIf(not opt.available(False), "ipopt_sens is not available")
     def test_indexedParamsMapping(self):
 
@@ -280,24 +284,24 @@ class TestSensitivityToolbox(unittest.TestCase):
                              [m.epsDelta,m.qqDelta,m.aaDelta])
 
         #param to var data
-        self.assertTrue(m_sipopt._sipopt_data.paramConst[1].lower.local_name \
-                                 == 'eps' and
-                        m_sipopt._sipopt_data.paramConst[1].body.local_name \
-                                  == 'eps' and
-                        m_sipopt._sipopt_data.paramConst[1].upper.local_name \
-                                  == 'eps' )
-        self.assertTrue(m_sipopt._sipopt_data.paramConst[6].lower.local_name \
-                                 == 'qq[2,0]' and
-                        m_sipopt._sipopt_data.paramConst[6].body.local_name \
-                                  == 'qq[2,0]' and
-                        m_sipopt._sipopt_data.paramConst[6].upper.local_name \
-                                  == 'qq[2,0]' )
-        self.assertTrue(m_sipopt._sipopt_data.paramConst[10].lower.local_name \
-                                 == 'aa' and
-                        m_sipopt._sipopt_data.paramConst[10].body.local_name \
-                                  == 'aa' and
-                        m_sipopt._sipopt_data.paramConst[10].upper.local_name \
-                                  == 'aa' )
+        self.assertEqual(
+            m_sipopt._sipopt_data.paramConst[1].lower.local_name, 'eps')
+        self.assertEqual(
+            m_sipopt._sipopt_data.paramConst[1].body.local_name, 'eps')
+        self.assertEqual(
+            m_sipopt._sipopt_data.paramConst[1].upper.local_name, 'eps')
+        self.assertEqual(
+            m_sipopt._sipopt_data.paramConst[6].lower.local_name, 'qq[2,0]')
+        self.assertEqual(
+            m_sipopt._sipopt_data.paramConst[6].body.local_name, 'qq[2,0]')
+        self.assertEqual(
+            m_sipopt._sipopt_data.paramConst[6].upper.local_name, 'qq[2,0]')
+        self.assertEqual(
+            m_sipopt._sipopt_data.paramConst[10].lower.local_name, 'aa')
+        self.assertEqual(
+            m_sipopt._sipopt_data.paramConst[10].body.local_name, 'aa')
+        self.assertEqual(
+            m_sipopt._sipopt_data.paramConst[10].upper.local_name, 'aa')
     
 
 
