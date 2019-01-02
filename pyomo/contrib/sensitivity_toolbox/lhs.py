@@ -30,6 +30,15 @@ def lhs(paramDists,nSamples):
 
     """
 
+    #Verify user inputs
+    if type(nSamples) is not int: 
+        raise ValueError("nSamples argument is expecting an int")
+
+    for pp in range(len(paramDists)):
+        if type(paramDists[pp]) is not stats._distn_infrastructure.rv_frozen:
+            raise ValueError("paramDists argument is expecting distributions"
+                              " from the scipy.stats library")
+
     mParams = len(paramDists)
     lhs_0to1 = np.linspace(0,1,nSamples+1)    
 
@@ -56,5 +65,5 @@ if __name__ == "__main__":
     dist5 = stats.gamma(2)
     dist6 = stats.norm(-2.7,0.47)
     test = [dist1,dist2,dist3,dist4,dist5,dist6]    
-    samples = lhs(test,1000)
+    samples = lhs(test,int(1e5))
 
